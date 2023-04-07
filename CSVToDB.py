@@ -1,7 +1,6 @@
 import sqlite3
 from PyQt5.QtWidgets import *
 from PyQt5 import *
-######################################
 
 
 class MainWindow(QMainWindow):
@@ -86,14 +85,3 @@ connector_app = QApplication([])
 window = MainWindow()
 window.show()
 connector_app.exec()
-
-# # Insert DataFrame to Table
-# for row in df.itertuples():
-#     cursor.execute('''
-#                 INSERT INTO products (product_id, product_name, price)
-#                 VALUES (?,?,?)
-#                 ''',
-#                    row.product_id,
-#                    row.product_name,
-#                    row.price
-#                    )
