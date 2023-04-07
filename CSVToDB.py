@@ -2,6 +2,14 @@ import sqlite3
 from PyQt5.QtWidgets import *
 from PyQt5 import *
 
+# To DO
+# ------------
+#  1) Comment code
+#  2) Make prettier
+#  3) Add error handling
+#  4) Add dialog to confirm or reject input
+#  5) Add progress bar
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
