@@ -4,14 +4,19 @@ from PyQt5 import *
 
 # To DO
 # ------------
-#  1) Comment code
+#  1) Fix types (checking clumn name type right now not the data)
 #  2) Make prettier
 #  3) Add error handling
 #  4) Add dialog to confirm or reject input
 #  5) Add progress bar
 
+#  7) Make csv file name default table/db name
+#  8) Make script to install dependencies
+#  9) Make executable
+
 
 class MainWindow(QMainWindow):
+    # Initialize the application GUI
     def __init__(self):
         super().__init__()
         self.widget = QWidget()
@@ -47,18 +52,20 @@ class MainWindow(QMainWindow):
         self.button1.clicked.connect(self.enter_button_clicked)
         self.file_button.clicked.connect(self.file_finder)
 
+    # When the enter button is clicked
     def enter_button_clicked(self):
         if QtCore.Qt.MouseButton.LeftButton:
             conn = sqlite3.connect((self.db_text.text()+'.db'))
             cursor = conn.cursor()
 
+            # Open CSV file and set the database columns
             csv_file = open(self.file_finder_text.text())
             header = csv_file.readline().split(",")
             header[-1] = header[-1][:-1]
             sql_header_line = 'CREATE TABLE ' + self.table_text.text() + '('
             for column in header:
                 column = column.replace(" ", "")
-                if isinstance(column, int):
+                if column.isnumeric():
                     sql_header_line += column + " int, "
                 else:
                     sql_header_line += column + " nvarchar(255), "
@@ -67,6 +74,7 @@ class MainWindow(QMainWindow):
             cursor.execute(sql_header_line)
             conn.commit()
 
+            # Insert the table contents
             header = [i.replace(" ", "") for i in header]
             contents = csv_file.readlines()[0:]
             for content in contents:
@@ -83,12 +91,14 @@ class MainWindow(QMainWindow):
                 conn.commit()
             csv_file.close()
 
+    # Execute the file finder when the button is pressed
     def file_finder(self):
         file_name, _ = QtWidgets.QFileDialog.getOpenFileName(
             self, 'Single File', QtCore.QDir.rootPath(), '*.csv')
         self.file_finder_text.setText(file_name)
 
 
+# Run the app
 connector_app = QApplication([])
 window = MainWindow()
 window.show()
