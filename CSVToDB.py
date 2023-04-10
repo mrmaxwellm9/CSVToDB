@@ -3,19 +3,13 @@ import os
 from PyQt5.QtWidgets import *
 from PyQt5 import *
 
-# To DO
-# ------------
 
-#  3) Add error handling
 #  5) Add progress bar
-#  7) Make csv file name default table/db name
+#  1) Fix types (checking column name type right now not the data)
 
 #  8) Make script to install dependencies
 #  9) Make executable
 
-#  1) Fix types (checking column name type right now not the data)
-
-# Remove failed files
 
 # Import less
 
@@ -66,64 +60,72 @@ class MainWindow(QMainWindow):
 
     # When the enter button is clicked
     def enter_button_clicked(self):
-        if QtCore.Qt.MouseButton.LeftButton:
-            # Open CSV file and set the database columns
-            file_name = os.path.basename(self.file_finder_text.text())
-            file_name = os.path.splitext(file_name)[0]
-            try:
-                csv_file = open(self.file_finder_text.text())
-            except:
-                msg = QMessageBox()
-                msg.setIcon(QMessageBox.Critical)
-                msg.setText('Invalid CSV file')
-                msg.setWindowTitle("Error")
-                msg.exec_()
-                return
+        try:
+            if QtCore.Qt.MouseButton.LeftButton:
+                # Open CSV file and set the database columns
+                file_name = os.path.basename(self.file_finder_text.text())
+                file_name = os.path.splitext(file_name)[0]
+                try:
+                    csv_file = open(self.file_finder_text.text())
+                except:
+                    msg = QMessageBox()
+                    msg.setIcon(QMessageBox.Critical)
+                    msg.setText('Invalid CSV file')
+                    msg.setWindowTitle("Error")
+                    msg.exec_()
+                    return
 
-            if self.table_text.text() == "":
-                self.table_text.setText(file_name)
-            if self.db_text.text() == "":
-                self.db_text.setText(file_name)
-            try:
-                conn = sqlite3.connect((self.db_text.text()+'.db'))
-            except:
-                msg = QMessageBox()
-                msg.setIcon(QMessageBox.Critical)
-                msg.setText('Invalid Database Name')
-                msg.setWindowTitle("Error")
-                msg.exec_()
-                return
-            cursor = conn.cursor()
+                if self.table_text.text() == "":
+                    self.table_text.setText(file_name)
+                if self.db_text.text() == "":
+                    self.db_text.setText(file_name)
+                try:
+                    conn = sqlite3.connect((self.db_text.text()+'.db'))
+                except:
+                    msg = QMessageBox()
+                    msg.setIcon(QMessageBox.Critical)
+                    msg.setText('Invalid Database Name')
+                    msg.setWindowTitle("Error")
+                    msg.exec_()
+                    return
+                cursor = conn.cursor()
 
-            header = csv_file.readline().split(",")
-            header[-1] = header[-1][:-1]
+                header = csv_file.readline().split(",")
+                header[-1] = header[-1][:-1]
 
-            sql_header_line = 'CREATE TABLE ' + self.table_text.text() + '('
-            for column in header:
-                column = column.replace(" ", "")
-                if column.isnumeric():
-                    sql_header_line += column + " int, "
-                else:
-                    sql_header_line += column + " nvarchar(255), "
-            sql_header_line = sql_header_line[:-2] + ")"
-            print(sql_header_line)
-            cursor.execute(sql_header_line)
-            conn.commit()
-
-            # Insert the table contents
-            header = [i.replace(" ", "") for i in header]
-            contents = csv_file.readlines()[0:]
-            for content in contents:
-                content = content[:-1]
-                content = tuple(content.split(","))
-                sql_insert_line = "INSERT INTO " + \
-                    self.table_text.text() + " VALUES (?"
-                for i in range(len(header)-1):
-                    sql_insert_line += ", ?"
-                sql_insert_line += ")"
-                cursor.execute(sql_insert_line, content)
+                sql_header_line = 'CREATE TABLE ' + self.table_text.text() + '('
+                for column in header:
+                    column = column.replace(" ", "")
+                    if column.isnumeric():
+                        sql_header_line += column + " int, "
+                    else:
+                        sql_header_line += column + " nvarchar(255), "
+                sql_header_line = sql_header_line[:-2] + ")"
+                print(sql_header_line)
+                cursor.execute(sql_header_line)
                 conn.commit()
-            csv_file.close()
+
+                # Insert the table contents
+                header = [i.replace(" ", "") for i in header]
+                contents = csv_file.readlines()[0:]
+                for content in contents:
+                    content = content[:-1]
+                    content = tuple(content.split(","))
+                    sql_insert_line = "INSERT INTO " + \
+                        self.table_text.text() + " VALUES (?"
+                    for i in range(len(header)-1):
+                        sql_insert_line += ", ?"
+                    sql_insert_line += ")"
+                    cursor.execute(sql_insert_line, content)
+                    conn.commit()
+                csv_file.close()
+        except:
+            msg = QMessageBox()
+            msg.setIcon(QMessageBox.Critical)
+            msg.setText('Unknown Error Occurred')
+            msg.setWindowTitle("Error")
+            msg.exec_()
+            return
 
     # Execute the file finder when the button is pressed
     def file_finder(self):
@@ -131,8 +133,9 @@ class MainWindow(QMainWindow):
             self, 'Single File', QtCore.QDir.rootPath(), '*.csv')
         self.file_finder_text.setText(file_name)
 
-
 # Run the app
+
+
 def runApp():
     connector_app = QApplication([])
     window = MainWindow()
