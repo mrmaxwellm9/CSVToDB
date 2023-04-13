@@ -3,6 +3,8 @@ from os import path
 from PyQt5.QtWidgets import QWidget, QPushButton, QProgressBar, QLineEdit, QLabel, QMessageBox, QFileDialog, QApplication, QMainWindow
 from PyQt5 import QtCore
 
+# pyinstaller.exe --onefile --windowed --icon=icon.ico --name CSVToBD cli.py
+
 
 class DialogWindow(QWidget):
     def __init__(self):
