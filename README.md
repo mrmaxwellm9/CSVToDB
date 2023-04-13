@@ -14,8 +14,8 @@ Finally click the enter button to start converting and wait until the progress b
 The .db file will be exported to the same directory as the executable.
 
 
-#Improvements Needed
+# Improvements Needed
 
 Better type matching, right now only positive whole numbers are marked as ints and everything else as a string. 
 
-Allow userss to pick the datatypes from a dropdown menu
+Allow users to pick the datatypes from a dropdown menu
