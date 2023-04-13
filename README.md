@@ -1,5 +1,7 @@
 # CSVToDB
 
+Basic program to convert CSV files to Database files.
+
 # Usage
 
 To use, download the CSVToDB.7z file and extract it. Then, run the CSVToDB executable to run the program.
