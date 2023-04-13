@@ -1,6 +1,6 @@
 # CSVToDB
 
-#Usage
+# Usage
 
 To use, download the CSVToDB.7z file and extract it. Then, run the CSVToDB executable to run the program.
 
